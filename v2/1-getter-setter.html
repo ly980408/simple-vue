@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getter and setter</title>
+  <script src="../utils/welcome.js"></script>
+</head>
+<body>
+  <div></div>
+</body>
+<script>
+  // 目标：
+  // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+  // 使用 Object.defineProperty() 重新定义每个对象的属性的 getter 和 setter，
+  // 保留他们的原始行为，即基本的取值/赋值，但同时在取值/赋值时进行 console.log()
+
+  // 实现：
+  function convert(obj) {
+    Object.keys(obj).forEach(key => {
+      let value = obj[key]
+      Object.defineProperty(obj, key, {
+        get() {
+          console.log(`getting key ${key}: ${value}`)
+          return value
+        },
+        set(newValue) {
+          console.log(`setting key ${key} to ${newValue}`)
+          value = newValue
+        }
+      })
+    })
+  }
+
+  // 运行：
+  const state = {
+    a: 1,
+    b: 2
+  }
+  convert(state)
+
+  const stateA = state.a
+  // 输出：getting key a: 1
+
+  state.b = 2
+  // 输出：setting key b to 2
+</script>
+</html>

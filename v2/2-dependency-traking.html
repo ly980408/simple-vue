@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dependency Tracking</title>
+  <script src="../utils/welcome.js"></script>
+</head>
+<body>
+  
+</body>
+<script>
+  // 目标：
+  // 创建一个 `Dep` 类，包含两个方法：`depend` 和 `notify`，分别用于收集依赖和触发依赖执行
+  // 创建一个 `autorun` 函数，它接受一个 `update` 方法作为参数，并且会去执行它
+  // 在 `update` 方法内部通过执行 `dep.depend()` 方法来收集依赖
+  // 然后，就可以通过 `dep.notify()` 去触发 `update` 方法的再次执行
+
+  // 实现：
+  class Dep {
+    constructor() {
+      // 依赖项列表，采用了 Set 数据结构进行处理
+      this.subscribers = new Set()
+    }
+    depend() {
+      // 收集依赖
+      if (activeUpdate) {
+        this.subscribers.add(activeUpdate)
+      }
+    }
+    notify() {
+      // 触发依赖
+      this.subscribers.forEach(sub => sub())
+    }
+  }
+
+  let activeUpdate
+  function autorun (update) {
+    function wrappedUpdate () {
+      activeUpdate = wrappedUpdate
+      update()
+      activeUpdate = null
+    }
+    wrappedUpdate()
+  }
+  // function autorun (update) {
+  //   activeUpdate = update
+  //   update()
+  //   activeUpdate = null
+  // }
+
+  // 运行：
+  const dep = new Dep()
+  window.dep
+
+  autorun(() => {
+    dep.depend()
+    console.log('updated')
+  })
+  // 此处应该输出：updated
+
+  dep.notify()
+  // 此处应该输出：updated
+</script>
+</html>
